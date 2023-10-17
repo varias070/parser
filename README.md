@@ -3,7 +3,7 @@
 1. Клонировать репозиторий из гит
 
       ```bash
-       git clone git@github.com:varias070/MIS.git
+      git@github.com:varias070/parser.git
 
 3. установить зависимости 
     ```bash
