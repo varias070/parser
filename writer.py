@@ -1,8 +1,8 @@
 import csv
 
 
-def write_csv(entitys):
-    with open('data.csv', 'w', newline='') as csvfile:
+def write_csv(entitys, filename):
+    with open(f'{filename}.csv', 'w', newline='') as csvfile:
         fieldnames = ['id', 'Название', 'Ссылка', 'Бренд', 'Цена', 'Промо цена']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         for entity in entitys:

@@ -1,7 +1,29 @@
 import requests
 
 
-def get_data():
+def extract(products):
+    extract_data = []
+    for product in products:
+        _id = product["id"]
+        name = product["name"]
+        link = product["url"]
+        manufacturer = product["manufacturer"]["name"]
+        stock = product["stocks"][0]
+        normal_price = stock["prices_per_unit"]["old_price"]
+        promo_price = stock["prices_per_unit"]["offline"]["price"]
+
+        extract_data.append({
+            "id": _id,
+            "name": name,
+            "link": link,
+            "manufacturer": manufacturer,
+            "normal_price": normal_price,
+            "promo_price": promo_price,
+        })
+    return extract_data
+
+
+def get_data(stor_id):
     with requests.Session() as session:
         home = session.get("https://online.metro-cc.ru")
         cookies = home.cookies
@@ -11,7 +33,7 @@ def get_data():
             "variables": {
                 "isShouldFetchOnlyProducts": True,
                 "slug": "kofe",
-                "storeId": 0,
+                "storeId": stor_id,
                 "sort": "default",
                 "size": 1000000,
                 "from": 0,
@@ -22,7 +44,7 @@ def get_data():
                     }
                 ],
                 "attributes": [],
-                "in_stock": False,
+                "in_stock": True,
                 "eshop_order": False
             }
         }
@@ -30,25 +52,7 @@ def get_data():
         resp = session.post(url, json=data, cookies=cookies)
 
         if resp.status_code == 200:
-            extract_data = []
-            products = resp.json()["data"]["category"]["products"]
-            for product in products:
-                _id = product["id"]
-                name = product["name"]
-                link = product["url"]
-                manufacturer = product["manufacturer"]["name"]
-                stock = product["stocks"][0]
-                normal_price = stock["prices_per_unit"]["old_price"]
-                promo_price = stock["prices_per_unit"]["offline"]["price"]
+            return extract(resp.json()["data"]["category"]["products"])
 
-                extract_data.append({
-                    "id": _id,
-                    "name": name,
-                    "link": link,
-                    "manufacturer": manufacturer,
-                    "normal_price": normal_price,
-                    "promo_price": promo_price,
-                })
-            return extract_data
         else:
-            raise Exception(f"Проблема с запросом, стаутс кода {resp.status_code}")
+            raise Exception(f"Проблема с запросом, стаутс кода {moscow_resp.status_code}")
